@@ -1,5 +1,4 @@
 import sqlite3
-import os
 import os.path
 import secrets
 import string
@@ -36,9 +35,11 @@ def get_token():
 
     create_token()
 
+    # Read file
     with open(token_path, 'r') as f:
         token = f.readline()
 
+    # Print token to Flask console
     print(' * ▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾', file=sys.stderr)
     print(' * X-Authen-Token -> %s' % (token), file=sys.stderr)
     print(' * ▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴', file=sys.stderr)

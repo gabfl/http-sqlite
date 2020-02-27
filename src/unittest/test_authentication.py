@@ -14,7 +14,7 @@ class Test(BaseTest):
         assert len(token) == 30
 
     def test_create_token(self):
-        # Save db path
+        # Save token path
         old_path = authentication.token_path
 
         # Set temporary path

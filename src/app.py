@@ -20,12 +20,12 @@ class Unauthorized(HTTPException):
 
 class PreconditionFailed(HTTPException):
     code = 412
-    description = 'Missing X-Auth-Token header. Token is available in src/data/token'
+    description = 'Missing X-Auth-Token header. Token is available in src/data/token.'
 
 
 default_exceptions[401] = Unauthorized
 default_exceptions[412] = PreconditionFailed
-abort = Aborter()  # don't from flask import abort
+abort = Aborter()
 
 
 def need_authentication(f):
@@ -44,7 +44,6 @@ def need_authentication(f):
         if token != user_token:
             abort(401)
 
-        # finally call f. f() now haves access to g.user
         return f(*args, **kwargs)
 
     return wrap

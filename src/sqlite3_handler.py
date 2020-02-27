@@ -1,5 +1,5 @@
 import sqlite3
-import os
+import os.path
 
 from .bootstrap import get_or_create_app
 
