@@ -24,6 +24,18 @@ def connect():
     return (True, conn)
 
 
+def execute(connection, query, args=[]):
+    """ Execute a query """
+
+    cursor = connection.cursor()
+    cursor.execute(query, args)
+    connection.commit()
+    rows = cursor.fetchall()
+    cursor.close()
+
+    return rows
+
+
 def run_query(query):
 
     # Establish db connection
@@ -38,11 +50,7 @@ def run_query(query):
 
     # Execute query
     try:
-        cursor = connection.cursor()
-        cursor.execute(query)
-        connection.commit()
-        rows = cursor.fetchall()
-        cursor.close()
+        rows = execute(connection, query)
     except sqlite3.OperationalError as e:  # Invalid SQL query
         return {
             'success': False,
@@ -61,3 +69,19 @@ def run_query(query):
         'success': True,
         'result': rows
     }, 200
+
+
+def get_column_names(table):
+    """ Returns a list of column names from a given table """
+
+    # Establish db connection
+    success, connection = connect()
+
+    # Return error if the connection failed
+    if success is False:
+        return (False, connection)
+
+    rows = execute(
+        connection, 'SELECT name FROM PRAGMA_TABLE_INFO (?)', [table])
+
+    return (True, [t[0] for t in rows])
