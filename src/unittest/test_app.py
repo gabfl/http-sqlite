@@ -67,3 +67,54 @@ class Test(BaseTest):
         body = rv.json
         assert body['success'] is False
         assert body['message'] == 'Missing body'
+
+    def test_to_csv(self):
+        """ Test call to query to CSV endpoint """
+
+        rv = self.client.get(
+            '/to_csv',
+            data='SELECT 123, 456',
+            headers={'X-Auth-Token': self.app.config['TOKEN']}
+        )
+
+        # Payload is successful
+        assert rv.status_code == 200
+        assert rv.data == b'123,456\n'
+
+    def test_to_csv_invalid_query(self):
+        """ Test call to query to CSV endpoint with an invalid query """
+
+        rv = self.client.get(
+            '/to_csv',
+            data='SELECT * FROM invalid',
+            headers={'X-Auth-Token': self.app.config['TOKEN']}
+        )
+
+        # Payload is unsuccessful
+        assert rv.status_code == 400
+        assert b'no such table' in rv.data
+
+    def test_to_csv_empty_dataset(self):
+        """ Test call to query to CSV endpoint with no result """
+
+        rv = self.client.get(
+            '/to_csv',
+            data='SELECT 1 WHERE 1 = 2',
+            headers={'X-Auth-Token': self.app.config['TOKEN']}
+        )
+
+        # Payload is successful but the result is empty
+        assert rv.status_code == 200
+        assert rv.data == b'Empty\n'
+
+    def test_to_csv_missing_body(self):
+        """ Test call to query to CSV endpoint with no query """
+
+        rv = self.client.get(
+            '/to_csv',
+            headers={'X-Auth-Token': self.app.config['TOKEN']}
+        )
+
+        # Payload is unsuccessful
+        assert rv.status_code == 400
+        assert rv.data == b'Missing body\n'

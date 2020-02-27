@@ -91,6 +91,6 @@ def to_csv():
     if http_code == 200:
         csv = rows_to_csv(res.get('result', []),
                           delimiter=delimiter, quotechar=quotechar)
-        return csv or 'empty\n'
+        return csv or 'Empty\n'
     else:
         return res.get('message', 'Unknown error') + '\n', http_code

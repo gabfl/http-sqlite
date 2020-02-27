@@ -92,6 +92,21 @@ curl http://127.0.0.1:5000/ \
 }
 ```
 
+### CSV support
+
+#### Retrieve output as a CSV
+
+```bash
+curl http://127.0.0.1:5000/to_csv \
+ --header "X-Auth-Token: ****" \
+ --data "SELECT * FROM test;"
+ ```
+
+ ```json
+Some text,2020-02-27
+Some other text,2020-02-27
+ ```
+
 ## Installation
 
 ```bash
