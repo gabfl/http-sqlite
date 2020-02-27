@@ -22,7 +22,7 @@ class Test(BaseTest):
         # Attempt connection (will fail)
         success, connection = sqlite3_handler.connect()
         assert success is False
-        assert connection == 'expected str, bytes or os.PathLike object, not NoneType'
+        assert isinstance(connection, str)
 
         # Restore path
         sqlite3_handler.db_path = old_path
@@ -53,7 +53,7 @@ class Test(BaseTest):
         # Attempt connection (will fail)
         res, http_code = sqlite3_handler.run_query('SELECT 1')
         assert res['success'] is False
-        assert res['message'] == 'expected str, bytes or os.PathLike object, not NoneType'
+        assert isinstance(res['message'], str)
         assert http_code == 400
 
         # Restore path
