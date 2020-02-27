@@ -56,7 +56,7 @@ def query():
     # Read body
     body = request.get_data().decode('utf-8')
 
-    if not body or body == '':
+    if not body:
         return {
             'success': False,
             'message': 'Missing body'
@@ -78,7 +78,7 @@ def to_csv():
     # Read body
     body = request.get_data().decode('utf-8')
 
-    if not body or body == '':
+    if not body:
         return 'Missing body\n', 400
 
     # Get options
@@ -105,13 +105,13 @@ def from_csv():
     # Get options
     table = request.headers.get('X-Table')
 
-    if not table or table == '':
+    if not table:
         return {
             'success': False,
             'message': 'Missing table in X-Table'
         }, 400
 
-    if not body or body == '':
+    if not body:
         return {
             'success': False,
             'message': 'Missing CSV in body'
