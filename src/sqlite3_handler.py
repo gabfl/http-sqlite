@@ -1,5 +1,6 @@
 import sqlite3
 import os
+
 from .bootstrap import get_or_create_app
 
 app = get_or_create_app()

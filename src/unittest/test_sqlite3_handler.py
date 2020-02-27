@@ -1,4 +1,3 @@
-import json
 import sqlite3
 
 from .base import BaseTest

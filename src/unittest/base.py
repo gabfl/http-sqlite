@@ -10,6 +10,9 @@ class BaseTest(unittest.TestCase):
         cls.app = bootstrap.get_or_create_app()
         cls.app.config['TESTING'] = True
         cls.app.config['SQLITE_LOCATION'] = ':memory:'
+        cls.app.config['TOKEN'] = 'unittest_token'
+
+        # Test http client
         cls.client = cls.app.test_client()
 
     @classmethod
