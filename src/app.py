@@ -1,6 +1,6 @@
 from functools import wraps
 
-from werkzeug.exceptions import HTTPException, default_exceptions,  Aborter
+from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
 from flask import Flask, request, abort
 
 from .sqlite3_handler import run_query
