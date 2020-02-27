@@ -23,3 +23,21 @@ class Test(BaseTest):
 
         assert csv_handler.rows_to_csv(
             rows, quotechar='~') == '1,2,3\nsome,value,~he~~re~\n'
+
+    def test_parse_csv(self):
+        # Parse a simple CSV
+
+        assert csv_handler.parse_csv("a,c,c\nd,e,f") == [
+            ['a', 'c', 'c'], ['d', 'e', 'f']]
+
+    def test_parse_csv_delimiter(self):
+        # Parse a simple CSV with a custom delimiter
+
+        assert csv_handler.parse_csv("a;c;c\nd;e;f", delimiter=';') == [
+            ['a', 'c', 'c'], ['d', 'e', 'f']]
+
+    def test_parse_csv_quotechar(self):
+        # Parse a simple CSV with a custom quotechar
+
+        assert csv_handler.parse_csv("a,~c~,c\nd,~e~,~fg~~hi~", quotechar='~') == [
+            ['a', 'c', 'c'], ['d', 'e', 'fg~hi']]

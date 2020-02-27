@@ -1,6 +1,9 @@
+from io import StringIO
 import csv
 import sys
 import tempfile
+
+from . import sqlite3_handler
 
 
 def rows_to_csv(rows, delimiter=',', quotechar='"'):
@@ -22,3 +25,62 @@ def rows_to_csv(rows, delimiter=',', quotechar='"'):
             lines = f.read()
 
     return lines
+
+
+def import_from_csv(table, body):
+
+    to_db = [
+        ['1', '2', '3'],
+        ['4', '5', '6'],
+    ]
+
+    # Connect to the database
+    success, connection = sqlite3_handler.connect()
+
+    # Return error if the connection failed
+    if success == False:
+        return False, connection
+
+    # Get column names
+    columns = sqlite3_handler.get_column_names(connection, table)
+
+    # If there is no result, table does not exists
+    if columns == []:
+        return False, 'no such table: %s' % table
+
+    # Prepare columns
+    columns_str = ', '.join(columns)  # ['a', 'b', 'c'] -> 'a, b, c'
+    column_args_placeholder = (
+        '?, ' * len(columns)).strip(', ')  # ['a', 'b', 'c'] -> '?, ?, ?'
+
+    try:
+        res = sqlite3_handler.execute(
+            connection=connection,
+            query='INSERT INTO %s (%s) VALUES (%s);' % (
+                table, columns_str, column_args_placeholder),
+            args=to_db,
+            many=True)
+
+        return True, None
+    except sqlite3.OperationalError as e:  # Invalid SQL query
+        return False, str(e)
+
+
+def parse_csv(input, delimiter=',', quotechar='"'):
+    """
+        Parse a user input
+        "a,c,c\nd,e,f"
+        ->
+        [['a', 'c', 'c'], ['d', 'e', 'f']]
+    """
+
+    # Load input to an in-memory buffer
+    buff = StringIO(input)
+
+    # Parse CSV
+    reader = csv.reader(buff, delimiter=delimiter, quotechar=quotechar)
+    rows = []
+    for row in reader:
+        rows.append(row)
+
+    return rows

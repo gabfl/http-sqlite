@@ -4,7 +4,7 @@ from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
 from flask import Flask, request, abort
 
 from .sqlite3_handler import run_query
-from .csv_handler import rows_to_csv
+from .csv_handler import rows_to_csv, import_from_csv
 from .bootstrap import get_or_create_app
 from .authentication import get_token
 
@@ -50,7 +50,7 @@ def need_authentication(f):
     return wrap
 
 
-@app.route("/", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route("/", methods=['GET', 'POST'])
 @need_authentication
 def query():
     # Read body
@@ -72,7 +72,7 @@ def query():
     }, http_code
 
 
-@app.route("/to_csv", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route("/to_csv", methods=['GET', 'POST'])
 @need_authentication
 def to_csv():
     # Read body
@@ -94,3 +94,27 @@ def to_csv():
         return csv or 'Empty\n'
     else:
         return res.get('message', 'Unknown error') + '\n', http_code
+
+
+@app.route("/from_csv", methods=['POST'])
+@need_authentication
+def from_csv():
+    # Read body
+    body = request.get_data().decode('utf-8')
+
+    # Get options
+    table = request.headers.get('X-Table')
+
+    if not table or table == '':
+        return {
+            'success': False,
+            'message': 'Missing table in X-Table'
+        }, 400
+
+    # Attempt to import CSV
+    success, message = import_from_csv(table, body)
+
+    return {
+        'success': success,
+        'message': message,
+    }, 200 if success is True else 400
