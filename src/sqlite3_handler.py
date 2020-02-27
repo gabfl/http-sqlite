@@ -48,6 +48,11 @@ def run_query(query):
             'success': False,
             'message': str(e)
         }, 400
+    except sqlite3.Warning as e:  # Invalid SQL query
+        return {
+            'success': False,
+            'message': str(e)
+        }, 400
 
     # for row in rows:
     #     print(row)

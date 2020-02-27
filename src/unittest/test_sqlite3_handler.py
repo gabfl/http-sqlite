@@ -35,8 +35,24 @@ class Test(BaseTest):
         assert http_code == 200
 
     def test_query_invalid(self):
-        # Test a query on a non-existent table
+        """
+            Test a query on a non-existent table
+            Throws sqlite3.OperationalError
+        """
+
         res, http_code = sqlite3_handler.run_query('SELECT * FROM invalid')
+        assert res['success'] is False
+        assert isinstance(res['message'], str)
+        assert http_code == 400
+
+    def test_query_invalid_2(self):
+        """
+            Test execute two statements at a time
+            Throws sqlite3.Warning
+        """
+
+        # Test a query on a non-existent table
+        res, http_code = sqlite3_handler.run_query('SELECT 1; SELECT 2;')
         assert res['success'] is False
         assert isinstance(res['message'], str)
         assert http_code == 400
