@@ -5,13 +5,16 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/gabfl/http-sqlite/master/LICENSE)
 
 `http-sqlite` is a rest API built on top of SQLite.
+
 It simply allows users to run any SQLite query over HTTP.
 
 ## Authentication
 
 The rest API is authenticated with a header `X-Auth-Token`.
+
 When launching `http-sqlite` for the first time a file `src/data/token` is automatically created with a random token.
-You can override the file content to chose a personalized token.
+
+You can override the file content to choose a personalized token.
 
 ## Usage example
 
@@ -64,6 +67,8 @@ curl http://127.0.0.1:5000/ \
 }
 ```
 
+### Selecting rows from a table
+
 ```bash
 curl http://127.0.0.1:5000/ \
  --header "X-Auth-Token: ****" \
@@ -86,8 +91,6 @@ curl http://127.0.0.1:5000/ \
   "success": true
 }
 ```
-
-### Selecting from a table
 
 ## Installation
 
