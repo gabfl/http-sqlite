@@ -24,7 +24,7 @@ class Test(BaseTest):
         assert body['result'] == [[1234, 5678]]
 
     def test_query_missing_token(self):
-        """ Test query """
+        """ Test query with no token """
 
         rv = self.client.post(
             '/',
@@ -38,7 +38,7 @@ class Test(BaseTest):
         assert b'Missing X-Auth-Token header' in rv.data
 
     def test_query_invalid_token(self):
-        """ Test query """
+        """ Test query with invalid token """
 
         rv = self.client.post(
             '/',
@@ -69,7 +69,7 @@ class Test(BaseTest):
         assert body['message'] == 'Missing body'
 
     def test_to_csv(self):
-        """ Test call to query to CSV endpoint """
+        """ Test query to /to_csv """
 
         rv = self.client.get(
             '/to_csv',
@@ -82,7 +82,7 @@ class Test(BaseTest):
         assert rv.data == b'123,456\n'
 
     def test_to_csv_invalid_query(self):
-        """ Test call to query to CSV endpoint with an invalid query """
+        """ Test query to /to_csv (invalid query) """
 
         rv = self.client.get(
             '/to_csv',
@@ -95,7 +95,7 @@ class Test(BaseTest):
         assert b'no such table' in rv.data
 
     def test_to_csv_empty_dataset(self):
-        """ Test call to query to CSV endpoint with no result """
+        """ Test query to /to_csv (empty result) """
 
         rv = self.client.get(
             '/to_csv',
@@ -108,7 +108,7 @@ class Test(BaseTest):
         assert rv.data == b'Empty\n'
 
     def test_to_csv_missing_body(self):
-        """ Test call to query to CSV endpoint with no query """
+        """ Test query to /to_csv (missing query) """
 
         rv = self.client.get(
             '/to_csv',
