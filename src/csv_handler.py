@@ -53,7 +53,8 @@ def import_from_csv(table, body, delimiter=',', quotechar='"'):
             query='INSERT INTO %s (%s) VALUES (%s);' % (
                 table, columns_str, column_args_placeholder),
             args=parse_csv(body, delimiter=delimiter, quotechar=quotechar),
-            many=True)
+            many=True
+        )
 
         return True, None
     except sqlite3.ProgrammingError as e:  # Invalid SQL query
