@@ -1,5 +1,6 @@
 import sqlite3
-import os
+import os.path
+
 from .bootstrap import get_or_create_app
 
 app = get_or_create_app()
@@ -43,6 +44,11 @@ def run_query(query):
         rows = cursor.fetchall()
         cursor.close()
     except sqlite3.OperationalError as e:  # Invalid SQL query
+        return {
+            'success': False,
+            'message': str(e)
+        }, 400
+    except sqlite3.Warning as e:  # Invalid SQL query
         return {
             'success': False,
             'message': str(e)

@@ -8,8 +8,9 @@ dist/
 .pytest_cache
 venv/
 
-# Sqlite db
+# Project data
 src/data/sqlite.db
+src/data/token
 
 # wsgi socker
 socket/http-sqlite.sock
