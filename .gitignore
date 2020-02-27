@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.Python
+*.egg-info
+build/
+dist/
+.pytest_cache
+venv/
+
+# Sqlite db
+src/data/sqlite.db
+
+# wsgi socker
+socket/http-sqlite.sock
+
+# Codecov
+.coverage
+coverage.xml
+
+# Mac
+.DS_Store

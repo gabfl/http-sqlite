@@ -1,0 +1,11 @@
+[run]
+source=http-sqlite
+
+[report]
+omit =
+  src/__main__.py
+  wsgi.py
+  src/unittest/*
+  venv/*
+exclude_lines =
+  if __name__ == '__main__':
