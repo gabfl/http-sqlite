@@ -4,6 +4,7 @@ from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
 from flask import Flask, request, abort
 
 from .sqlite3_handler import run_query
+from .csv_handler import rows_to_csv
 from .bootstrap import get_or_create_app
 from .authentication import get_token
 
@@ -69,3 +70,27 @@ def query():
         'message': res.get('message'),
         'result': res.get('result'),
     }, http_code
+
+
+@app.route("/to_csv", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@need_authentication
+def to_csv():
+    # Read body
+    body = request.get_data().decode('utf-8')
+
+    if not body or body == '':
+        return 'Missing body\n', 400
+
+    # Get options
+    delimiter = request.headers.get('X-Option-Delimiter', ',')
+    quotechar = request.headers.get('X-Option-Quotechar', '"')
+
+    # Attempt to run query
+    res, http_code = run_query(body)
+
+    if http_code == 200:
+        csv = rows_to_csv(res.get('result', []),
+                          delimiter=delimiter, quotechar=quotechar)
+        return csv or 'empty\n'
+    else:
+        return res.get('message', 'Unknown error') + '\n', http_code
