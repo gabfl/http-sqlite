@@ -77,7 +77,11 @@ def run_query(query):
 def get_column_names(connection, table):
     """ Returns a list of column names from a given table """
 
-    rows = execute(
-        connection, 'SELECT name FROM PRAGMA_TABLE_INFO (?)', [table])
+    # rows = execute(
+    #     connection, 'SELECT name FROM PRAGMA_TABLE_INFO (?)', [table])
 
-    return [t[0] for t in rows]
+    # return [t[0] for t in rows]
+
+    rows = execute(connection, "PRAGMA TABLE_INFO ('" + table + "')")
+
+    return [t[1] for t in rows]

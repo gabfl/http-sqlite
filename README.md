@@ -73,7 +73,7 @@ curl http://127.0.0.1:5000/ \
 curl http://127.0.0.1:5000/ \
  --header "X-Auth-Token: ****" \
  --data "SELECT * FROM test;"
- ```
+```
 
 ```json
 {
@@ -100,12 +100,30 @@ curl http://127.0.0.1:5000/ \
 curl http://127.0.0.1:5000/to_csv \
  --header "X-Auth-Token: ****" \
  --data "SELECT * FROM test;"
- ```
+```
 
- ```json
+```json
 Some text,2020-02-27
 Some other text,2020-02-27
- ```
+```
+
+#### Import from a CSV into a table
+
+```bash
+# Create a table that matches the schema of your CSV
+curl http://127.0.0.1:5000/ \
+ --header "X-Auth-Token: ****" \
+ --data "CREATE TABLE my_csv (a text, b text, c text)"
+
+# Import CSV
+curl http://127.0.0.1:5000/from_csv \
+ --header "X-Auth-Token: ****" \
+ --header "X-Table: my_csv" \
+ --data "a,b,c\nd,e,f\ng,h,i"
+
+# Use this instead of "--data" to load a CSV from a file
+# --data-binary "@my_file.csv"
+```
 
 ## Installation
 

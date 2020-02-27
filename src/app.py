@@ -100,7 +100,7 @@ def to_csv():
 @need_authentication
 def from_csv():
     # Read body
-    body = request.get_data().decode('utf-8')
+    body = request.get_data().decode('unicode-escape').encode().decode('utf-8')
 
     # Get options
     table = request.headers.get('X-Table')
@@ -109,6 +109,12 @@ def from_csv():
         return {
             'success': False,
             'message': 'Missing table in X-Table'
+        }, 400
+
+    if not body or body == '':
+        return {
+            'success': False,
+            'message': 'Missing CSV in body'
         }, 400
 
     # Attempt to import CSV
