@@ -24,6 +24,21 @@ def connect():
     return (True, conn)
 
 
+def execute(connection, query, args=[], many=False):
+    """ Execute a query """
+
+    cursor = connection.cursor()
+    if many:  # Multiple execution
+        cursor.executemany(query, args)
+    else:  # Single execution
+        cursor.execute(query, args)
+    connection.commit()
+    rows = cursor.fetchall()
+    cursor.close()
+
+    return rows
+
+
 def run_query(query):
 
     # Establish db connection
@@ -38,11 +53,7 @@ def run_query(query):
 
     # Execute query
     try:
-        cursor = connection.cursor()
-        cursor.execute(query)
-        connection.commit()
-        rows = cursor.fetchall()
-        cursor.close()
+        rows = execute(connection, query)
     except sqlite3.OperationalError as e:  # Invalid SQL query
         return {
             'success': False,
@@ -61,3 +72,22 @@ def run_query(query):
         'success': True,
         'result': rows
     }, 200
+
+
+def get_column_names(connection, table):
+    """
+        Returns a list of column names from a given table
+
+        It is not possible to use a parameterized query as seen here:
+        https://stackoverflow.com/questions/39985599/parameter-binding-not-working-for-sqlite-pragma-table-info
+
+    """
+
+    # Check for forbidden characters
+    # Simple attempt to validate input since we cannot use parameterized queries
+    if any(ext in table for ext in [',', '"', "'", ';']):
+        return []
+
+    rows = execute(connection, "PRAGMA TABLE_INFO ('%s')" % (table))
+
+    return [t[1] for t in rows]

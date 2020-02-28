@@ -6,6 +6,12 @@ from .. import sqlite3_handler
 
 class Test(BaseTest):
 
+    connection = None
+
+    def setUp(self):
+        # Create db connection
+        success, self.connection = sqlite3_handler.connect()
+
     def test_connect(self):
 
         success, connection = sqlite3_handler.connect()
@@ -26,6 +32,11 @@ class Test(BaseTest):
 
         # Restore path
         sqlite3_handler.db_path = old_path
+
+    def test_execute(self):
+        rows = sqlite3_handler.execute(self.connection, 'SELECT 123, 456')
+
+        assert rows == [(123, 456)]
 
     def test_query(self):
         # Test a valid query
@@ -74,3 +85,25 @@ class Test(BaseTest):
 
         # Restore path
         sqlite3_handler.db_path = old_path
+
+    def test_get_column_names(self):
+        # Drop table if exists
+        sqlite3_handler.execute(
+            self.connection,
+            'DROP TABLE IF EXISTS to_test_cols_names;'
+        )
+
+        # Creating a test table
+        sqlite3_handler.execute(
+            self.connection,
+            'CREATE TABLE to_test_cols_names (a text, b text, c text);'
+        )
+
+        # Retrieve columns
+        assert sqlite3_handler.get_column_names(
+            self.connection, 'to_test_cols_names') == ['a', 'b', 'c']
+
+    def test_get_column_names_forbidden_characters(self):
+        # Retrieve columns
+        assert sqlite3_handler.get_column_names(
+            self.connection, 'inval;id') == []

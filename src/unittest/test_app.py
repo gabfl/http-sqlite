@@ -1,6 +1,7 @@
 import json
 
 from .base import BaseTest
+from .. import sqlite3_handler
 
 
 class Test(BaseTest):
@@ -118,3 +119,74 @@ class Test(BaseTest):
         # Payload is unsuccessful
         assert rv.status_code == 400
         assert rv.data == b'Missing body\n'
+
+    def test_from_csv(self):
+        # Simulate input
+        table = 'to_test_csv_import'
+
+        success, connection = sqlite3_handler.connect()
+
+        # Drop table if exists
+        sqlite3_handler.execute(
+            connection,
+            'DROP TABLE IF EXISTS %s;' % (table)
+        )
+
+        # Creating a test table
+        sqlite3_handler.execute(
+            connection,
+            'CREATE TABLE %s (a text, b text, c text);' % (table)
+        )
+
+        rv = self.client.post(
+            '/from_csv',
+            data="a,c,c\nd,e,f",
+            headers={
+                'X-Auth-Token': self.app.config['TOKEN'],
+                'X-Table': table
+            }
+        )
+
+        # Payload is successful
+        assert rv.status_code == 200
+
+        # Validate response
+        body = rv.json
+        assert body['success'] is True
+        assert body['message'] is None
+
+    def test_from_csv_missing_body(self):
+        """ Test query to /from_csv (missing CSV in body) """
+
+        rv = self.client.post(
+            '/from_csv',
+            headers={
+                'X-Auth-Token': self.app.config['TOKEN'],
+                'X-Table': 'some_table'
+            }
+        )
+
+        # Payload is unsuccessful
+        assert rv.status_code == 400
+
+        # Validate error message
+        body = rv.json
+        assert body['success'] is False
+        assert body['message'] == 'Missing CSV in body'
+
+    def test_from_csv_missing_table(self):
+        """ Test query to /from_csv (missing table) """
+
+        rv = self.client.post(
+            '/from_csv',
+            data='a,b,c\nd,e,f',
+            headers={'X-Auth-Token': self.app.config['TOKEN']}
+        )
+
+        # Payload is unsuccessful
+        assert rv.status_code == 400
+
+        # Validate error message
+        body = rv.json
+        assert body['success'] is False
+        assert body['message'] == 'Missing table in X-Table'
