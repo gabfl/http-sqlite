@@ -102,3 +102,8 @@ class Test(BaseTest):
         # Retrieve columns
         assert sqlite3_handler.get_column_names(
             self.connection, 'to_test_cols_names') == ['a', 'b', 'c']
+
+    def test_get_column_names_forbidden_characters(self):
+        # Retrieve columns
+        assert sqlite3_handler.get_column_names(
+            self.connection, 'inval;id') == []

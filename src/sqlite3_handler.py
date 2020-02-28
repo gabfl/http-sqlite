@@ -75,8 +75,19 @@ def run_query(query):
 
 
 def get_column_names(connection, table):
-    """ Returns a list of column names from a given table """
+    """
+        Returns a list of column names from a given table
 
-    rows = execute(connection, "PRAGMA TABLE_INFO ('" + table + "')")
+        It is not possible to use a parameterized query as seen here:
+        https://stackoverflow.com/questions/39985599/parameter-binding-not-working-for-sqlite-pragma-table-info
+
+    """
+
+    # Check for forbidden characters
+    # Simple attempt to validate input since we cannot use parameterized queries
+    if any(ext in table for ext in [',', '"', "'", ';']):
+        return []
+
+    rows = execute(connection, "PRAGMA TABLE_INFO ('%s')" % (table))
 
     return [t[1] for t in rows]
