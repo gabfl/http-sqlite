@@ -1,2 +1,3 @@
 Flask==1.1.*
 uwsgi
+markupsafe==2.0.1
