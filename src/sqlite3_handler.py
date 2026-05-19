@@ -54,12 +54,11 @@ def run_query(query):
     # Execute query
     try:
         rows = execute(connection, query)
-    except sqlite3.OperationalError as e:  # Invalid SQL query
-        return {
-            'success': False,
-            'message': str(e)
-        }, 400
-    except sqlite3.Warning as e:  # Invalid SQL query
+    except (
+        sqlite3.OperationalError,
+        sqlite3.Warning,
+        sqlite3.ProgrammingError,
+    ) as e:
         return {
             'success': False,
             'message': str(e)
